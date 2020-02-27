@@ -2,7 +2,6 @@ import "isomorphic-fetch";
 import Koa from "koa";
 import dotenv from "dotenv";
 import session from "koa-session";
-import serve from "koa-static";
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
 import proxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
 dotenv.config();
@@ -13,7 +12,6 @@ const {
   PORT = 3000,
   NODE_ENV = "development"
 } = process.env;
-const isProduction = NODE_ENV === "production";
 
 const init = async () => {
   const app = new Koa();
@@ -38,7 +36,6 @@ const init = async () => {
   app.use(verifyRequest());
   app.use(async (ctx, next) => {
     ctx.body = "Hello World";
-    // await next();
   });
   app.listen(PORT, () => `Server is now listening on http://localhost:${PORT}`);
 };
