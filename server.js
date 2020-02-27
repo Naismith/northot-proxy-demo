@@ -72,7 +72,11 @@ const init = async () => {
 		`;
   });
 
+  app.use(router.routes());
+  app.use(router.allowedMethods());
+
   app.use(session(app));
+
   app.use(
     createShopifyAuth({
       apiKey: SHOPIFY_API_KEY,
@@ -88,13 +92,6 @@ const init = async () => {
 
   app.use(proxy({ version: ApiVersion.January20 }));
   app.use(verifyRequest());
-
-  router.get("/", (ctx, next) => {
-    ctx.body = "Hello World";
-  });
-
-  app.use(router.routes());
-  app.use(router.allowedMethods());
 
   app.listen(PORT, () => `Server is now listening on http://localhost:${PORT}`);
 };
