@@ -21,27 +21,6 @@ const init = async () => {
 
   app.keys = [SHOPIFY_API_SECRET];
 
-  app.use(session(app));
-  app.use(
-    createShopifyAuth({
-      apiKey: SHOPIFY_API_KEY,
-      secret: SHOPIFY_API_SECRET,
-      scopes: ["read_products", "write_products"],
-      afterAuth(ctx) {
-        const { shop, accessToken } = ctx.session;
-        ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
-        ctx.redirect("/");
-      }
-    })
-  );
-
-  app.use(proxy({ version: ApiVersion.January20 }));
-  app.use(verifyRequest());
-
-  router.get("/", (ctx, next) => {
-    ctx.body = "Hello World";
-  });
-
   router.get("/menu", (ctx, next) => {
     ctx.set("Content-Type", "application/liquid");
     ctx.body = `
@@ -92,6 +71,28 @@ const init = async () => {
 			}
 		`;
   });
+
+  app.use(session(app));
+  app.use(
+    createShopifyAuth({
+      apiKey: SHOPIFY_API_KEY,
+      secret: SHOPIFY_API_SECRET,
+      scopes: ["read_products", "write_products"],
+      afterAuth(ctx) {
+        const { shop, accessToken } = ctx.session;
+        ctx.cookies.set("shopOrigin", shop, { httpOnly: false });
+        ctx.redirect("/");
+      }
+    })
+  );
+
+  app.use(proxy({ version: ApiVersion.January20 }));
+  app.use(verifyRequest());
+
+  router.get("/", (ctx, next) => {
+    ctx.body = "Hello World";
+  });
+
   app.use(router.routes());
   app.use(router.allowedMethods());
 
